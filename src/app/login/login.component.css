@@ -7,7 +7,7 @@
 
 .left-side {
   width: 50%;
-  background-color: #6b2328; /* fond blanc */
+  background-color: #531418; /* fond blanc */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -176,4 +176,43 @@ input:focus {
   background-color: #f5eeee;
   box-shadow: 0 0 8px rgba(107, 35, 40, 0.6);
   transform: scale(1.02);
+}
+/* 🔸 Animation de texte avec fondu et flou progressif */
+@keyframes fadeBlur {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+/* Appliquer à text-overlay */
+.text-overlay {
+  animation: fadeBlur 1.6s ease forwards;
+  opacity: 0;
+}
+
+/* 🔸 Flou de fond animé pour la partie gauche */
+.left-side::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(4px);
+  background: rgba(83, 20, 24, 0.4); /* semi-transparent overlay */
+  z-index: 0;
+  animation: fadeIn 1s ease forwards;
+}
+
+/* Positionnement relatif pour .left-side afin que le ::before fonctionne */
+.left-side {
+  position: relative;
+  z-index: 1;
 }
