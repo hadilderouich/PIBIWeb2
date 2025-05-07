@@ -44,6 +44,10 @@ export class LoginComponent {
     }
 
     // Determine which dashboard to show based on user email
+    // Store credentials in localStorage
+    localStorage.setItem('userEmail', email);
+    localStorage.setItem('userPassword', this.password);
+
     if (email === 'wala.aloulou@esprit.tn' || email === 'bahaeddine.elfidha@esprit.tn') {
       this.router.navigate(['/dashboard/copie1']);
     } else if (email === 'hadil.derouich@esprit.tn' || email === 'meriem.dghaies@esprit.tn') {
