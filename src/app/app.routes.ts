@@ -6,21 +6,22 @@ import { Copie3Component } from './dashboard/copie3/copie3.component';
 import { AuthGuard } from './auth.guard';
 
 export const routes: Routes = [
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  {
-    path: 'dashboard/copie1',
-    component: Copie1Component,
+  { 
+    path: 'dashboard/copie1', 
+    component: Copie1Component, 
     canActivate: [AuthGuard]
   },
-  {
-    path: 'dashboard/copie2',
-    component: Copie2Component,
+  { 
+    path: 'dashboard/copie2', 
+    component: Copie2Component, 
     canActivate: [AuthGuard]
   },
-  {
-    path: 'dashboard/copie3',
-    component: Copie3Component,
+  { 
+    path: 'dashboard/copie3', 
+    component: Copie3Component, 
     canActivate: [AuthGuard]
   },
-  { path: '', redirectTo: '/login', pathMatch: 'full' }
+  { path: '**', redirectTo: '/login' }
 ];

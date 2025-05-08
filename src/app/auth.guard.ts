@@ -1,44 +1,46 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { inject } from '@angular/core';
+import { AuthService } from './services/auth.service';
+import { CanActivateFn, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
+export class AuthGuard {
+  private authService = inject(AuthService);
   private router = inject(Router);
 
-  canActivate(): boolean {
-    const email = localStorage.getItem('userEmail');
-    const password = localStorage.getItem('userPassword');
-    
-    if (!email || !password) {
-      this.router.navigate(['/login']);
-      return false;
-    }
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Promise<boolean> {
+    const url: string = state.url;
 
-    // Define the type for allowed emails
-    interface AllowedEmails {
-      [key: string]: string;
-    }
+    return new Promise<boolean>((resolve) => {
+      if (url.includes('/dashboard/')) {
+        if (!this.authService.isLoggedIn()) {
+          this.router.navigate(['/login'], { queryParams: { returnUrl: url } });
+          resolve(false);
+          return;
+        }
 
-    // Verify credentials
-    const allowedEmails: AllowedEmails = {
-      'wala.aloulou@esprit.tn': 'Password123',
-      'bahaeddine.elfidha@esprit.tn': 'Password123',
-      'hadil.derouich@esprit.tn': 'Password123',
-      'meriem.dghaies@esprit.tn': 'Password123',
-      'hadil.miladi@gmail.com': 'Password123',
-      'mouhib.jendoubi@esprit.tn': 'Password123'
-    };
+        const currentUser = this.authService.currentUserValue;
+        const dashboard = url.split('/')[2];
+        
+        if (currentUser.dashboard !== dashboard) {
+          this.router.navigate(['/login'], { queryParams: { returnUrl: url } });
+          resolve(false);
+          return;
+        }
+      }
 
-    // Type assertion to ensure the email exists in the object
-    const correctPassword = email in allowedEmails ? allowedEmails[email] : null;
-    if (!correctPassword || password !== correctPassword) {
-      this.router.navigate(['/login']);
-      return false;
-    }
-
-    return true;
+      resolve(true);
+    });
   }
 }
+
+export const authGuard: CanActivateFn = (route, state) => {
+  const authGuardService = inject(AuthGuard);
+  return authGuardService.canActivate(route, state);
+};
